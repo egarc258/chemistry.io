@@ -1,4 +1,12 @@
-info = {
+const NONMETAL = "Nonmetal";
+const NOBLE_GAS = "Noble Gas";
+const ALKALI_METAL = "Alkali Metal";
+const ALKALINE_EARTH_METAL = "Alkaline Earth Metal";
+const HALOGEN = "Halogen";
+const METALLOID = "Metalloid";
+const POST_TRANSITION_METAL = "Post-Transition Metal";
+
+const info = {
     1: {
         name : "Hydrogen",
         type : NONMETAL, 

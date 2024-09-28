@@ -71,3 +71,26 @@ body, html {
     margin-bottom: 20px; /* Space between the input and the button */
 }
 
+#leaderboard {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    color: rgb(255, 255, 255);
+    padding: 10px;
+    border-radius: 8px;
+    width: 200px;
+    display: none; /* Initially hidden */
+  }
+  
+  #leaderboard h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+  
+  #leaderboard-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+

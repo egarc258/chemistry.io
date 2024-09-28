@@ -1,14 +1,57 @@
 document.addEventListener("DOMContentLoaded", () => {
     const gameMenu = document.getElementById("game-menu");
     const startGameBtn = document.getElementById("start-game-btn");
+    const nameInputScreen = document.getElementById("name-input-screen");
     const canvas = document.getElementById("view");
+    const submitNameBtn = document.getElementById("submit-name-btn");
+    const leaderboard = document.getElementById("leaderboard");
+    const leaderboardList = document.getElementById("leaderboard-list");
 
     // Start the game when the "Start Game" button is clicked
     startGameBtn.addEventListener("click", () => {
         gameMenu.style.display = "none";   // Hide the game menu
-        canvas.style.display = "block";    // Show the game canvas
-        setup();  // Initialize the game
+        nameInputScreen.style.display = "block";    // Show the game canvas
+        
     });
+
+    
+    submitNameBtn.addEventListener("click", () => {
+        const playerName = document.getElementById("player-name").value;
+        if (playerName.trim() !== "") {
+            nameInputScreen.style.display = "none";
+            canvas.style.display = "block";
+            setup(playerName); // Pass the name to the setup function
+        }else{
+            alert("Please enter a valid name.");
+        }
+    });
+
+    // Function to update the leaderboard
+    function updateLeaderBoard(players) {
+        leaderboardList.innerHTML = ""; // Clear existing leaderboard
+
+        players.forEach(player => {
+            const li = document.createElement("li");
+            li.textContent = `${player.name}: ${player.score}`;
+            leaderboardList.appendChild(li);
+        });
+    }
+
+    // Function to show the leaderboard during gameplay
+    function showLeaderboard() {
+        leaderboard.style.display = "block";
+    }
+
+    const players = [
+        { name: "Player1", score: 150 },
+        { name: "Player1", score: 150 },
+        { name: "Player1", score: 150 }
+    ];
+
+    // Call showLeaderboard when the game starts and update the scores
+    showLeaderboard();
+    updateLeaderBoard(players);
+   
 });
 
 const ElectronStates = {
@@ -17,7 +60,7 @@ const ElectronStates = {
 }
 
 class Player {
-    constructor (x,y,renderer){
+    constructor (x,y,renderer, name = ""){
         this.particles = [];
         this.attackelectrons = [];//The electrons shjould be stored in order such that the next electron is clockwise from the previous one in the list. This will be beneficial to determining the nearest electron when trying to attack.
         this.valenceelectrons = []
@@ -32,6 +75,7 @@ class Player {
         this.size = 0
         this.numParticles = 2
         this.maxAmmunition = this.numParticles
+        this.name = name; // Store the player's name
     }
 
     fireToward(x,y){
@@ -86,6 +130,8 @@ class Player {
     }
 
     draw( ctx ){
+
+        ctx.save();
 
         //Particles
         var p = this.numParticles
@@ -167,11 +213,14 @@ class Player {
         ctx.rotate(-this.electronRotation * Math.PI / 180);
         ctx.translate(-this.x,-this.y)
         this.electronRotation += 20/e
+
+        ctx.restore();
     }
 
     get electronCount(){
         return this.electrons.length
     }
+
 }
 class Proton {
     //Null parent indicates world space parent
