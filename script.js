@@ -20,9 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (playerName.trim() !== "") {
             nameInputScreen.style.display = "none";
             canvas.style.display = "block";
+            leaderboard.style.display = "block";
+            document.getElementById("player-stats").style.display = "block";
             setup(playerName); // Pass the name to the setup function
-        }else{
-            alert("Please enter a valid name.");
+            
+            setup(playerName);
         }
     });
 
@@ -396,10 +398,23 @@ class ParticleRenderer{
 }
 
 function setup() {
+
+    const playerStats = {
+        health: 100,
+        speed: 50,
+        attack: 75,
+        defense: 60,
+        electronegativity: 80
+    };
+
+
+    updatePlayerStats(exampleStats);
     // Set up game canvas and initialize player
     var canvas = document.getElementById("view");
     canvas.height = canvas.offsetHeight;
     canvas.width = canvas.offsetWidth;
+
+    
 
     renderer = new ParticleRenderer();
     context = canvas.getContext("2d");
@@ -410,6 +425,29 @@ function setup() {
     setInterval(loop, 10)
     setInterval(() => summonFood(renderer), 1000)
 }
+
+function updatePlayerStats(stats) {
+    // Assuming `stats` is an object with keys for each stat
+    const { health, speed, attack, defense, electronegativity } = stats;
+
+    // Convert the stat values to a percentage (or a value that fits the bar's width)
+    document.getElementById("health-fill").style.width = health + "%";
+    document.getElementById("speed-fill").style.width = speed + "%";
+    document.getElementById("attack-fill").style.width = attack + "%";
+    document.getElementById("defense-fill").style.width = defense + "%";
+    document.getElementById("electronegativity-fill").style.width = electronegativity + "%";
+}
+
+// Example usage with some random stat values
+const exampleStats = {
+    health: 70,         // 70% health
+    speed: 50,          // 50% speed
+    attack: 90,         // 90% attack
+    defense: 40,        // 40% defense
+    electronegativity: 60 // 60% electronegativity
+};
+
+
 
 function summonFood(ren){
     

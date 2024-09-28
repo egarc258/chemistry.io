@@ -93,16 +93,47 @@ body, html {
     border-radius: 8px;
     width: 200px;
     display: none; /* Initially hidden */
-  }
+}
   
-  #leaderboard h3 {
+#leaderboard h3 {
     margin-top: 0;
     text-align: center;
-  }
+}
   
-  #leaderboard-list {
+#leaderboard-list {
     list-style: none;
     padding: 0;
-  }
+}
+
+#player-stats {
+    display: none; /* Hide the stats by default */
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.stat-bar-container {
+    margin-bottom: 8px;
+}
+
+.stat-bar {
+    width: 200px; /* Adjust the width as necessary */
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.stat-fill {
+    height: 100%;
+    background-color: #76c7c0;
+    transition: width 0.3s ease;
+}
+
   
 
