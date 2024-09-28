@@ -50,3 +50,31 @@ class Player {
         this.assignType(); // Reassign stats based on the new number of particles
     }
 }
+
+//Updated move function: 
+    move(dx,dy){
+        this.x += dx
+        this.y += dy
+
+        //Check For Collisions
+        for (var i = 0; i < this.renderer.deadProtons.length; i++){
+            var p = this.renderer.deadProtons[i]
+            if ( this.distTo(p.relx,p.rely) < this.size ){
+                this.renderer.deadProtons.splice(i,1)
+                this.numParticles++
+                updateParticles(this.numParticles); //CHANGE MADE HERE
+                this.maxAmmunition = this.numParticles
+                break;
+            }
+        } 
+        if (this.ammunition >= this.maxAmmunition) return
+        for (var i = 0; i < this.renderer.deadElectrons.length; i++){
+            var e = this.renderer.deadElectrons[i]
+            if ( this.distTo(e.x,e.y) < this.size ){
+                this.renderer.deadElectrons.splice(i,1)
+                this.ammunition++
+                break;
+            }
+        } 
+
+    }
