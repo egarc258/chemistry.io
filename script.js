@@ -1,3 +1,16 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const gameMenu = document.getElementById("game-menu");
+    const startGameBtn = document.getElementById("start-game-btn");
+    const canvas = document.getElementById("view");
+
+    // Start the game when the "Start Game" button is clicked
+    startGameBtn.addEventListener("click", () => {
+        gameMenu.style.display = "none";   // Hide the game menu
+        canvas.style.display = "block";    // Show the game canvas
+        setup();  // Initialize the game
+    });
+});
+
 const ElectronStates = {
     ALIVE: 1,
     DEAD: 2
@@ -260,24 +273,43 @@ class ParticleRenderer{
     }
 }
 
-function setup(){
-
-    //Adjust Resolution
+function setup() {
+    // Set up game canvas and initialize player
     var canvas = document.getElementById("view");
-    canvas.height = canvas.offsetHeight
-    canvas.width = canvas.offsetWidth
+    canvas.height = canvas.offsetHeight;
+    canvas.width = canvas.offsetWidth;
 
-    
-    renderer = new ParticleRenderer()
-    context = canvas.getContext("2d")
-    center = new Point2D(canvas.width/2,canvas.height/2);
-    cameraPos = new Point2D(center.x,center.y);
-    player = new Player(center.x,center.y, renderer);
+    renderer = new ParticleRenderer();
+    context = canvas.getContext("2d");
+    center = new Point2D(canvas.width / 2, canvas.height / 2);
+    cameraPos = new Point2D(center.x, center.y);
+    player = new Player(center.x, center.y, renderer);
 
+    setInterval(loop, 10);
+    setInterval(() => summonFood(renderer), 1000);
 
-    setInterval(loop, 10)
-    setInterval(() => summonFood(renderer), 1000)
+    // Mouse movement and click listeners
+    addEventListener("mousemove", (event) => {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+    });
+
+    canvas.addEventListener("mousedown", (event) => {
+        player.fireToward(event.clientX, event.clientY);
+    });
+
+    // Keyboard movement listeners
+    addEventListener("keydown", (event) => {
+        speed = 20;
+        switch (event.key) {
+            case "w": player.move(0, -speed); break;
+            case "s": player.move(0, speed); break;
+            case "a": player.move(-speed, 0); break;
+            case "d": player.move(speed, 0); break;
+        }
+    });
 }
+
 
 function summonFood(ren){
     if (ren.deadElectrons.length > 30) return
