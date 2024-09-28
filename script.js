@@ -1,47 +1,14 @@
-function adjustCanvasSize() {
-    const canvas = document.getElementById("view");
-
-    // Set canvas size to match the window size
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Recalculate the center position
-    center.x = canvas.width / 2;
-    center.y = canvas.height / 2;
-}
-
-// Call this function on initial load and whenever the window is resized
-window.addEventListener("resize", adjustCanvasSize);
-window.onload = () => {
-    adjustCanvasSize(); // Adjust size on initial load
-    setup(); // Call your setup function here if necessary
-};
-
-
 document.addEventListener("DOMContentLoaded", () => {
     const gameMenu = document.getElementById("game-menu");
-    const nameInputScreen = document.getElementById("name-input-screen");
     const startGameBtn = document.getElementById("start-game-btn");
-    const submitNameBtn = document.getElementById("submit-name-btn");
     const canvas = document.getElementById("view");
 
     // Start the game when the "Start Game" button is clicked
     startGameBtn.addEventListener("click", () => {
         gameMenu.style.display = "none";   // Hide the game menu
-        nameInputScreen.style.display = "block";
+        canvas.style.display = "block";    // Show the game canvas
+        setup();  // Initialize the game
     });
-
-    // Handle name submission
-    submitNameBtn.addEventListener("click", () => {
-        const playerName = document.getElementById("player-name").value;
-        if (playerName) {
-            nameInputScreen.style.display = "none";// Hide the name input screen
-            canvas.style.display = "block"; // Show the game canvas
-            setup(playerName); // Initialize the game with the player's name
-        } else {
-            alert("Please enter a name.");
-        }
-    })
 });
 
 const ElectronStates = {
@@ -74,7 +41,7 @@ class Player {
             -Math.sign(this.y-y) * this.size * Math.abs(Math.sin(this.angleTo(x,y))) + this.y,
             -Math.sign(this.x-x) * 20 * Math.abs(Math.cos(this.angleTo(x,y))),
             -Math.sign(this.y-y) * 20 * Math.abs(Math.sin(this.angleTo(x,y))),
-            ElectronStates.ALIVE
+            ParticleStates.ALIVE
         )
         this.renderer.electrons.push(e)
         this.ammunition -= 1
@@ -89,11 +56,20 @@ class Player {
     move(dx,dy){
         this.x += dx
         this.y += dy
+
         //Check For Collisions
+        for (var i = 0; i < this.renderer.deadProtons.length; i++){
+            var p = this.renderer.deadProtons[i]
+            if ( this.distTo(p.relx,p.rely) < this.size ){
+                this.renderer.deadProtons.splice(i,1)
+                this.numParticles++
+                this.maxAmmunition = this.numParticles
+                break;
+            }
+        } 
         if (this.ammunition >= this.maxAmmunition) return
         for (var i = 0; i < this.renderer.deadElectrons.length; i++){
             var e = this.renderer.deadElectrons[i]
-            console.log(this.distTo(e.x,e.y))
             if ( this.distTo(e.x,e.y) < this.size ){
                 this.renderer.deadElectrons.splice(i,1)
                 this.ammunition++
@@ -115,7 +91,6 @@ class Player {
         var p = this.numParticles
         ctx.translate(this.x,this.y)
         ctx.rotate(this.angleTo(mouseX,mouseY))
-        console.log(this.angleTo(mouseX,mouseY))
 
         var n = 0;
         var s = 6;
@@ -200,10 +175,61 @@ class Player {
 }
 class Proton {
     //Null parent indicates world space parent
-    constructor(relx,rely,parent){}
+    constructor(relx,rely,parent,state){
+        this.relx = relx 
+        this.rely = rely
+        this.parent = parent
+        this.state = state
+    }
+
+    draw(ctx){
+        if (this.state == ParticleStates.ALIVE){
+
+        }
+        else{
+            ctx.setTransform()
+            ctx.fillStyle = "#f74949";
+            Drawing.drawCircle(ctx,this.relx,this.rely,30)
+            
+            ctx.fillStyle = "white";
+
+            ctx.beginPath()
+            ctx.rect(this.relx-8,this.rely-2,16,4)
+            ctx.fill()
+
+            ctx.beginPath()
+            ctx.rect(this.relx-2,this.rely-8,4,16)
+            ctx.fill()
+
+        }
+    }
 }
 class Neutron {
-    constructor(relx,rely,parent){}
+    constructor(relx,rely,parent,state){
+        this.relx = relx 
+        this.rely = rely
+        this.parent = parent
+        this.state = state
+    }
+
+    draw(ctx){
+        if (this.state == ParticleStates.ALIVE){
+
+        }
+        else{
+            ctx.setTransform()
+            ctx.fillStyle = "darkslategrey";
+            Drawing.drawCircle(ctx,this.relx,this.rely,22)
+
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 3
+            ctx.setLineDash([])
+
+            ctx.beginPath();
+            ctx.arc(this.relx, this.rely, 6, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+    }
 }
 class Electron {
     constructor (x,y,velx,vely,state){
@@ -216,7 +242,7 @@ class Electron {
 
     draw(ctx){
 
-        if (this.state == ElectronStates.ALIVE){
+        if (this.state == ParticleStates.ALIVE){
             var magnitude = 10
 
             ctx.setTransform()
@@ -284,6 +310,8 @@ class ParticleRenderer{
     constructor(){
         this.electrons = []
         this.deadElectrons = [] 
+        this.deadProtons = []
+        this.deadNeutrons = []
     }
 
     drawElectrons(ctx){
@@ -304,9 +332,21 @@ class ParticleRenderer{
             this.deadElectrons[i].draw(ctx)
         }
     }
+
+    drawDeadProtons(ctx){
+        for (var i = 0; i < this.deadProtons.length; i++){
+            this.deadProtons[i].draw(ctx)
+        }
+    }
+
+    drawDeadNeutrons(ctx){
+        for (var i = 0; i < this.deadNeutrons.length; i++){
+            this.deadNeutrons[i].draw(ctx)
+        }
+    }
 }
 
-function setup(playerName) {
+function setup() {
     // Set up game canvas and initialize player
     var canvas = document.getElementById("view");
     canvas.height = canvas.offsetHeight;
@@ -318,60 +358,67 @@ function setup(playerName) {
     cameraPos = new Point2D(center.x, center.y);
     player = new Player(center.x, center.y, renderer);
 
-    console.log("Player's name:", playerName)
-
-    setInterval(loop, 10);
-    setInterval(() => summonFood(renderer), 1000);
-
-    // Mouse movement and click listeners
-    addEventListener("mousemove", (event) => {
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-    });
-
-    canvas.addEventListener("mousedown", (event) => {
-        player.fireToward(event.clientX, event.clientY);
-    });
-
-    // Keyboard movement listeners
-    addEventListener("keydown", (event) => {
-        speed = 20;
-        switch (event.key) {
-            case "w": player.move(0, -speed); break;
-            case "s": player.move(0, speed); break;
-            case "a": player.move(-speed, 0); break;
-            case "d": player.move(speed, 0); break;
-        }
-    });
+    setInterval(loop, 10)
+    setInterval(() => summonFood(renderer), 1000)
 }
 
-
 function summonFood(ren){
-    if (ren.deadElectrons.length > 30) return
+    
 
     var x = center.x * 2 * Math.random()
     var y = center.y * 2 * Math.random()
 
     if (player.distTo(x,y) < 400) return
 
-    ren.deadElectrons.push( new Electron(
-        x,//TODO: Change Later
-        y,
-        0, 0,
-        ElectronStates.DEAD
-    ))
+    var type = Math.random()
+    //Electron
+    if (type < 0.8){
+        if (ren.deadElectrons.length > 30) return
+        ren.deadElectrons.push( new Electron(
+            x,//TODO: Change Later
+            y,
+            0, 0,
+            ParticleStates.DEAD
+        ))
+    }
+    //Proton
+    else if (type < 0.9){
+        console.log("Proton")
+        if (ren.deadProtons.length > 10) return
+        ren.deadProtons.push( new Proton(
+            x,//TODO: Change Later
+            y,
+            null,
+            ParticleStates.DEAD
+        ))
+    }
+    //Neutron
+    else{
+        if (ren.deadNeutrons.length > 10) return
+        ren.deadNeutrons.push( new Neutron(
+            x,//TODO: Change Later
+            y,
+            null,
+            ParticleStates.DEAD
+        ))
+    }
+
 }
 
 function loop(){
-    context.fillStyle = "white"
+    context.fillStyle = "whitesmoke"
     context.beginPath()
     context.rect(0,0,center.x * 2,center.y * 2)
     context.fill()
 
     renderer.drawDeadElectrons(context)
+    renderer.drawDeadProtons(context)
+    renderer.drawDeadNeutrons(context)
+
     player.draw(context);
     renderer.drawElectrons(context)
     renderer.updateElectrons()
+
 }
 
 
@@ -380,7 +427,6 @@ function loop(){
 addEventListener("mousemove", (event) => {
     mouseX = event.mouseX
     mouseY = event.mouseY
-    console.log(mouseX)
 });
 
 info = {

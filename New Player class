@@ -1,0 +1,80 @@
+class Player {
+    constructor (x,y,renderer){
+        this.particles = [];
+        this.attackelectrons = [];//The electrons shjould be stored in order such that the next electron is clockwise from the previous one in the list. This will be beneficial to determining the nearest electron when trying to attack.
+        this.valenceelectrons = []
+        this.attElecStates = []
+        //Damage to particles should permeate by assigning a damage value to the hit particle. When the particle is hit again that particle transfers its damage value to all neighboring particles and updates its damage value higher. this continues until the damage permeates to the center where the player is at risk of instability
+        //Create a second smaller electron ring which's main purpose is bonding [maximum of 8 electrons]
+        this.x = x;
+        this.y = y;
+        this.electronRotation = 0;
+        this.renderer = renderer
+        this.ammunition = 0
+        this.size = 0
+        this.numParticles = 2
+        this.maxAmmunition = this.numParticles
+
+        this.name = ""; 
+        this.health = 500; 
+        this.speed = null; 
+        this.attack = null; 
+        this.defense = null; 
+        this.electronegativity = null; 
+        this.color = null; 
+        this.assignType(); 
+
+    }
+
+    assignType(){
+        if (info[this.numParticles]) {
+            let elementInfo = info[this.numParticles];
+
+            this.name = elementInfo.name;
+            this.speed = elementInfo.speed;
+            this.defense = elementInfo.defense;
+            this.attack = elementInfo.attack;
+            this.electronegativity = elementInfo.electronegativity;
+            this.color = elementInfo.color;
+
+            console.log(`Player is now ${this.type}`);
+        } else {
+            console.error(`No element found for ${this.numParticles} particles.`);
+        }
+    }
+
+    // Method to update number of particles and reassign type
+    updateParticles(newNumParticles) {
+        this.numParticles = newNumParticles;
+        this.maxAmmunition = this.numParticles;
+        this.assignType(); // Reassign stats based on the new number of particles
+    }
+}
+
+//Updated move function: 
+    move(dx,dy){
+        this.x += dx
+        this.y += dy
+
+        //Check For Collisions
+        for (var i = 0; i < this.renderer.deadProtons.length; i++){
+            var p = this.renderer.deadProtons[i]
+            if ( this.distTo(p.relx,p.rely) < this.size ){
+                this.renderer.deadProtons.splice(i,1)
+                this.numParticles++
+                updateParticles(this.numParticles); //CHANGE MADE HERE
+                this.maxAmmunition = this.numParticles
+                break;
+            }
+        } 
+        if (this.ammunition >= this.maxAmmunition) return
+        for (var i = 0; i < this.renderer.deadElectrons.length; i++){
+            var e = this.renderer.deadElectrons[i]
+            if ( this.distTo(e.x,e.y) < this.size ){
+                this.renderer.deadElectrons.splice(i,1)
+                this.ammunition++
+                break;
+            }
+        } 
+
+    }
