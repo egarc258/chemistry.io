@@ -34,6 +34,7 @@ body, html {
 
 #game-menu h1 {
     margin: 0 0 20px 0;
+    font-size: 75px;
 }
 
 #game-menu button {
@@ -42,18 +43,19 @@ body, html {
     background: #3498db;
     color: white;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 24px;
     cursor: pointer;
     transition: background 0.3s ease;
+    margin-top: 20px;
 }
 
 #game-menu button:hover {
     background: #2980b9;
 }
 
-#name-input-screen {
+#name-input-screen, #h1 {
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: rgba(44, 62, 80, 0.8);
@@ -61,14 +63,24 @@ body, html {
     text-align: center;
     border-radius: 10px;
     color: white;
+    font-size: 24px;
 }
 
-#name-input {
+#name-input, #player-name {
     width: 300px; /* Adjust width as needed */
     height: 40px; /* Adjust height as needed */
-    font-size: 48px; /* Increase font size for better readability */
+    font-size: 24px; /* Increase font size for better readability */
     padding: 5px; /* Add padding for better spacing */
     margin-bottom: 20px; /* Space between the input and the button */
+}
+
+#submit-name-btn{
+    width: 110px; /* Adjust width as needed */
+    height: 55px; /* Adjust height as needed */
+    font-size: 24px; /* Increase font size for better readability */
+    padding: 5px; /* Add padding for better spacing */
+    margin-bottom: 20px;
+    margin-left: 20px;
 }
 
 #leaderboard {
