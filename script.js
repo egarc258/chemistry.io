@@ -1,14 +1,47 @@
+function adjustCanvasSize() {
+    const canvas = document.getElementById("view");
+
+    // Set canvas size to match the window size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Recalculate the center position
+    center.x = canvas.width / 2;
+    center.y = canvas.height / 2;
+}
+
+// Call this function on initial load and whenever the window is resized
+window.addEventListener("resize", adjustCanvasSize);
+window.onload = () => {
+    adjustCanvasSize(); // Adjust size on initial load
+    setup(); // Call your setup function here if necessary
+};
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const gameMenu = document.getElementById("game-menu");
+    const nameInputScreen = document.getElementById("name-input-screen");
     const startGameBtn = document.getElementById("start-game-btn");
+    const submitNameBtn = document.getElementById("submit-name-btn");
     const canvas = document.getElementById("view");
 
     // Start the game when the "Start Game" button is clicked
     startGameBtn.addEventListener("click", () => {
         gameMenu.style.display = "none";   // Hide the game menu
-        canvas.style.display = "block";    // Show the game canvas
-        setup();  // Initialize the game
+        nameInputScreen.style.display = "block";
     });
+
+    // Handle name submission
+    submitNameBtn.addEventListener("click", () => {
+        const playerName = document.getElementById("player-name").value;
+        if (playerName) {
+            nameInputScreen.style.display = "none";// Hide the name input screen
+            canvas.style.display = "block"; // Show the game canvas
+            setup(playerName); // Initialize the game with the player's name
+        } else {
+            alert("Please enter a name.");
+        }
+    })
 });
 
 const ElectronStates = {
@@ -273,7 +306,7 @@ class ParticleRenderer{
     }
 }
 
-function setup() {
+function setup(playerName) {
     // Set up game canvas and initialize player
     var canvas = document.getElementById("view");
     canvas.height = canvas.offsetHeight;
@@ -284,6 +317,8 @@ function setup() {
     center = new Point2D(canvas.width / 2, canvas.height / 2);
     cameraPos = new Point2D(center.x, center.y);
     player = new Player(center.x, center.y, renderer);
+
+    console.log("Player's name:", playerName)
 
     setInterval(loop, 10);
     setInterval(() => summonFood(renderer), 1000);
@@ -338,6 +373,8 @@ function loop(){
     renderer.drawElectrons(context)
     renderer.updateElectrons()
 }
+
+
 
 
 addEventListener("mousemove", (event) => {
