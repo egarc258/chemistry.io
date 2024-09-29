@@ -8,51 +8,21 @@
     <title>Chem.io</title>
     <link rel="stylesheet" href="/style.css" />
     <script src="/script.js" defer></script>
-    
+    <script src="https://cdn.socket.io/socket.io-3.0.0.js"></script>
+
   </head>
-  <body>
-    <div id="game-menu">
-      <h1>Chem.io</h1>
-      <button id="start-game-btn">Start Game</button>
+  <body style="margin: 0px;">
+    <canvas id="view" style="background-color: rgb(189, 189, 189);"></canvas>
+    <div id="main"style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-content: start; justify-content: center; flex-direction: column;"><div style="width: 300px; display: block; height: fit-content; background-color: white; border-radius: 4px; border: solid rgb(226, 226, 226); border-width: 1px; box-shadow: 0 12px 20px 10px rgb(177, 177, 177); align-self: center;"><div style="text-align: center; margin: 20px; margin-bottom: 5px; font-size: x-large; font: -webkit-control; font-size: larger; font-weight: 100; padding-bottom: 15px; padding-top: 10px;">Please Enter A Name</div><div style="height: 37px; display: flex; justify-content: center; align-content: center; padding-bottom: 30px;"><input id="nameInput" type="text" style="height: auto; /* align-self: center; */ margin: 1px; border: none; background-color: whitesmoke; border-radius: 4px; width: 50%;"><button id="StartButton"style="border-radius: 70px; border-style: none; height: initial; aspect-ratio: 1/1; color: white; font-weight: bolder; background: black; font-size: 17px; /* align-self: center; */ margin: 5px;cursor: pointer;">+</button></div></div></div>
+    <div  id="leaderboard" hidden="true"class="" style="display: none; font: -webkit-control; background-color: rgba(0, 0, 0, 0.52); border-radius: 5px;">
+      <h3 style="margin-bottom: 0; margin-top: 5px;">Leaderboard</h3><h4 style="text-align: center; margin: 0px; font-weight: 200; font-style: italic;">Total Lifespan</h4>
+      <ul id="leaderboard-list" style="background-color: rgba(0, 0, 0, 0.26); min-height: 100px; border-radius: 5px; margin: 10px;"></ul>
     </div>
-
-    <div id="name-input-screen" style="display: none;">
-      <h1>Enter player name:</h1>
-      <input type="text" id="player-name" placeholder="Your Name"/>
-      <button id="submit-name-btn">Submit</button>
-    </div>
+    <div id="identifiers"hidden="true"style="position: absolute; width: 100%; bottom: 0; font: -webkit-control;"><div id="namePlate"style="width: -webkit-fill-available; text-align: center; font-style: italic;">~ Player 1 ~</div><div id="atomType"style="font-size: 40px; text-align: center; padding-bottom: 20px; text-transform: uppercase;text-decoration: underline;">Hydrogen 0</div></div>
     
-    
-    <canvas id="view"></canvas>
-
-    <div id="leaderboard">
-      <h3>Leaderboard</h3>
-      <ul id="leaderboard-list">
-    
-      </ul>
-    </div>
-
-    <div id="player-stats">
-      <div class="stat-bar-container">
-          <span>Health:</span>
-          <div class="stat-bar" id="health-bar"><div class="stat-fill" id="health-fill"></div></div>
-      </div>
-      <div class="stat-bar-container">
-          <span>Speed:</span>
-          <div class="stat-bar" id="speed-bar"><div class="stat-fill" id="speed-fill"></div></div>
-      </div>
-      <div class="stat-bar-container">
-          <span>Attack:</span>
-          <div class="stat-bar" id="attack-bar"><div class="stat-fill" id="attack-fill"></div></div>
-      </div>
-      <div class="stat-bar-container">
-          <span>Defense:</span>
-          <div class="stat-bar" id="defense-bar"><div class="stat-fill" id="defense-fill"></div></div>
-      </div>
-      <div class="stat-bar-container">
-          <span>Electronegativity:</span>
-          <div class="stat-bar" id="electronegativity-bar"><div class="stat-fill" id="electronegativity-fill"></div></div>
-      </div>
+    <div id="stats"hidden="true"style="position: absolute; left: 10px; bottom: 10px; font: -webkit-control; font-weight: 200; padding: 10px; border-bottom: solid black;"><div id="currentAtomHeader" style="font-style: italic; font-weight: 200; color: gray; padding-bottom: 5px;">1 - Hydrogen</div><div class="stat" id="speedStat">Mobility →&nbsp;</div>
+    <div class="stat" id="defenseStat">Stability →&nbsp;</div>
+    <div class="stat" id="attackStat">Entropy →&nbsp;</div><div class="stat" id="bodyDamageStat">Electronegativity →&nbsp;</div>
     </div>
   </body>
 </html>
